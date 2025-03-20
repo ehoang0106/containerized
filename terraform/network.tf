@@ -10,7 +10,7 @@ resource "aws_vpc" "db_vpc" {
 
 resource "aws_subnet" "db_subnet_1" {
   vpc_id = aws_vpc.db_vpc.id
-  cidr_block = "10.0.0.0/20"
+  cidr_block = "10.0.0.0/24"
   availability_zone = "us-west-1a"
 
   tags = {
@@ -20,9 +20,8 @@ resource "aws_subnet" "db_subnet_1" {
 
 resource "aws_subnet" "db_subnet_2" {
   vpc_id = aws_vpc.db_vpc.id
-  cidr_block = "10.0.1.0/20"
-  availability_zone = "us-west-1b"
-  availability_zone_id = "us-west-1c"
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-west-1c"
 
   tags = {
     Name = "db_subnet_2"
