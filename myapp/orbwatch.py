@@ -6,8 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-import time
-import json
 import mysql.connector
 from datetime import datetime
 import pytz
@@ -31,7 +29,7 @@ def init_database():
       print("Connected to MySQL")
       cursor = connection.cursor()
       
-      #create table if it doesn't exist
+      #create table
       create_table_query = """
       CREATE TABLE IF NOT EXISTS orbwatcher (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,6 +49,9 @@ def init_database():
     print(f"Error connecting to MySQL: {err}")
     return None
 
+
+
+
 def insert_into_mysql(connection, currency_id, currency_name, price_value, exchange_price_value, date):
   try:
     cursor = connection.cursor()
@@ -65,22 +66,6 @@ def insert_into_mysql(connection, currency_id, currency_name, price_value, excha
     print(f"Error inserting data: {err}")
     return False
 
-def get_previous_price(connection, currency_id):
-  try:
-    cursor = connection.cursor()
-    query = """
-    SELECT price_value 
-    FROM orbwatcher 
-    WHERE currency_id = %s 
-    ORDER BY date DESC 
-    LIMIT 1
-    """
-    cursor.execute(query, (currency_id,))
-    result = cursor.fetchone()
-    return result[0] if result else None
-  except mysql.connector.Error as err:
-    print(f"Error fetching previous price: {err}")
-    return None
 
 def init_driver():
   options = Options()
@@ -96,7 +81,7 @@ def init_driver():
   return driver
 
 def search_prices(type):
-  # Initialize database connection
+  #initialize connection
   connection = init_database()
   if not connection:
     print("Failed to connect to database")
