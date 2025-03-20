@@ -106,6 +106,15 @@ function updateChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animations: {
+                tension: {
+                    duration: 1800,
+                    easing: 'linear',
+                    from: 1,
+                    to: 0,
+                    loop: true
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: false,
