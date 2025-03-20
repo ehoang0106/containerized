@@ -99,12 +99,13 @@ def search_prices(type):
   
   data = []
   
-  rows = soup.find_all('tr')
-  for row in rows:
-    currency_name_span = row.find('span', {'data-tooltip-id': True})
-    if currency_name_span:
-      currency_name = currency_name_span.text
-      currency_id = currency_name_span['data-tooltip-id']
+  # Find the specific row with data-tooltip-id="divine"
+  divine_span = soup.find('span', {'data-tooltip-id': 'divine'})
+  if divine_span:
+    row = divine_span.find_parent('tr')
+    if row:
+      currency_name = divine_span.text
+      currency_id = divine_span['data-tooltip-id']
       price_value_span = row.find('span', {'class': 'price-value'})
       if price_value_span:
         price_value = price_value_span.text
@@ -115,8 +116,6 @@ def search_prices(type):
             exchange_price_value = exchange_price_value_span.text
             formatted_currency_name = currency_name.replace(" ", "").replace("'", "").replace("(", "").replace(")", "")
             
-            
-              
             data.append({
               'currency_id': currency_id,
               'currency_name': currency_name,
