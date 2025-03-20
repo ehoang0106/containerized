@@ -5,7 +5,7 @@ import sys
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
-# Add parent directory to Python path
+#add parent directory to python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from orbwatch import search_prices
 
@@ -38,7 +38,7 @@ def get_data():
 
   try:
     cursor = connection.cursor(dictionary=True)
-    # Get last 24 hours of data
+    #get last 24 hours of data
     query = """
     SELECT * FROM orbwatcher 
     WHERE date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
@@ -47,7 +47,7 @@ def get_data():
     cursor.execute(query)
     data = cursor.fetchall()
     
-    # Format data for Chart.js
+    #format data for Chart.js
     formatted_data = {
       'labels': [row['date'].strftime('%Y-%m-%d %H:%M') for row in data],
       'prices': [float(row['price_value'].replace(',', '')) for row in data]
