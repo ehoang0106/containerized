@@ -22,28 +22,11 @@ def init_database():
       host=os.getenv('DB_HOST'),
       user=os.getenv('DB_USER'),
       password=os.getenv('DB_PASSWORD'),
-      database=os.getenv('DB_NAME')
+      database='mydb'
     )
     
     if connection.is_connected():
       print("Connected to MySQL")
-      cursor = connection.cursor()
-      
-      #create table
-      create_table_query = """
-      CREATE TABLE IF NOT EXISTS orbwatcher (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        currency_id VARCHAR(255),
-        currency_name VARCHAR(255),
-        price_value VARCHAR(255),
-        exchange_price_value VARCHAR(255),
-        date DATETIME,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-      """
-      cursor.execute(create_table_query)
-      connection.commit()
-      
       return connection
   except mysql.connector.Error as err:
     print(f"Error connecting to MySQL: {err}")
