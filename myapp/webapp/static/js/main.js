@@ -62,7 +62,7 @@ function updateDisplay(data) {
     if (data.prices && data.prices.length > 0) {
         const latestPrice = data.prices[data.prices.length - 1];
         document.getElementById('currentPrice').textContent = 
-            `${latestPrice.toLocaleString()} chaos`;
+            `${latestPrice.toLocaleString()} exalted`;
     }
     
     updateChart(data);
@@ -95,7 +95,7 @@ function updateChart(data) {
             labels: data.labels,
             datasets: [
                 {
-                    label: 'Price (chaos)',
+                    label: 'Price (exalted)',
                     data: data.prices,
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.1,
@@ -111,7 +111,7 @@ function updateChart(data) {
                     beginAtZero: false,
                     title: {
                         display: true,
-                        text: 'Price (chaos)'
+                        text: 'Price (exalted)'
                     }
                 },
                 x: {
