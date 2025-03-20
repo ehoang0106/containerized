@@ -7,3 +7,7 @@ terraform.tfvars
 *.terraform.lock.hcl
 *.tfstate
 .venv/
+
+# Environment variables
+.env
+.env.*
