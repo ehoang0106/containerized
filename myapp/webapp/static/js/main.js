@@ -131,7 +131,7 @@ function updateChart(data) {
     });
 }
 
-// Initial data fetch
+//data fetch
 fetchData();
-// Update every 6 hours
-setInterval(fetchData, 6000000); 
+//update data every 6 hours
+setInterval(updateData, 6 * 60 * 60 * 1000);

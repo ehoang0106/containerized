@@ -1,12 +1,8 @@
 from flask import Flask, render_template, jsonify
 import mysql.connector
 import os
-import sys
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-
-#add parent directory to python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from orbwatch import search_prices
 
 load_dotenv()
@@ -15,7 +11,7 @@ app = Flask(__name__)
 
 def init_database():
   try:
-    #connect to database
+    #connect db
     connection = mysql.connector.connect(
       host=os.getenv('DB_HOST'),
       user=os.getenv('DB_USER'),
@@ -25,11 +21,11 @@ def init_database():
     if connection.is_connected():
       cursor = connection.cursor()
       
-      #create database if it doesn't exist
+      #create db if doesn't exist 
       cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
       cursor.execute("USE mydb")
       
-      #create table if it doesn't exist
+      
       create_table_query = """
       CREATE TABLE IF NOT EXISTS orbwatcher (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,11 +41,6 @@ def init_database():
       connection.commit()
       
       return connection
-    else:
-      print("Failed to connect to database")
-      return None
-    
-    
   except mysql.connector.Error as err:
     print(f"Error connecting to MySQL: {err}")
     return None
