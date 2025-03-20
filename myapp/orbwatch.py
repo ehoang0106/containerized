@@ -99,7 +99,7 @@ def search_prices(type):
   
   data = []
   
-  # Find the specific row with data-tooltip-id="divine"
+  #find the specific row with data-tooltip-id="divine"
   divine_span = soup.find('span', {'data-tooltip-id': 'divine'})
   if divine_span:
     row = divine_span.find_parent('tr')
