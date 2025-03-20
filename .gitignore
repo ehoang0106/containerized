@@ -1,4 +1,4 @@
-# Terraform
+
 *.tfvars
 *.tfvars.json
 .terraform/
@@ -8,6 +8,7 @@ terraform.tfvars
 *.tfstate
 .venv/
 
-# Environment variables
 .env
 .env.*
+
+__pycache__/
