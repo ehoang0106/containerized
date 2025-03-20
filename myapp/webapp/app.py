@@ -24,7 +24,6 @@ def init_database():
     
     if connection.is_connected():
       cursor = connection.cursor()
-      print("Connected to database")
       
       #create database if it doesn't exist
       cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
@@ -67,7 +66,7 @@ def get_data():
 
   try:
     cursor = connection.cursor(dictionary=True)
-    # Get last 7 days of data
+    #get last 7 days of data
     query = """
     SELECT * FROM orbwatcher 
     WHERE date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
@@ -79,7 +78,7 @@ def get_data():
     if not data:
       return jsonify({'error': 'No data available'}), 404
     
-    # Format data for Chart.js
+    #format data for Chart.js
     formatted_data = {
       'labels': [row['date'].strftime('%Y-%m-%d %H:%M') for row in data],
       'prices': [float(row['price_value'].replace(',', '')) for row in data]
@@ -101,4 +100,4 @@ def update_data():
     return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-  app.run(debug=True) 
+  app.run(host='0.0.0.0', port=5000, debug=True) 

@@ -133,5 +133,5 @@ function updateChart(data) {
 
 // Initial data fetch
 fetchData();
-// Update every 2 minutes
-setInterval(fetchData, 120000); 
+// Update every 6 hours
+setInterval(fetchData, 6000000); 
