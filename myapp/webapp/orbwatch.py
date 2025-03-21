@@ -52,15 +52,24 @@ def insert_into_mysql(connection, currency_id, currency_name, price_value, excha
 
 def init_driver():
   options = Options()
-  options.add_argument("--headless")
+  options.add_argument("--headless=new")
   options.add_argument("--no-sandbox")
   options.add_argument("--disable-dev-shm-usage")
   options.add_argument("--disable-gpu")
   options.add_argument("--log-level=3")
-  options.add_argument("--remote-debugging-port=0")
+  options.add_argument("--remote-debugging-port=9222")
   options.add_argument("--enable-unsafe-swiftshader")
+  options.add_argument("--disable-software-rasterizer")
+  options.add_argument("--disable-extensions")
+  options.add_argument("--disable-setuid-sandbox")
+  options.add_argument("--no-first-run")
+  options.add_argument("--no-default-browser-check")
+  options.add_argument("--disable-popup-blocking")
+  options.add_argument("--disable-notifications")
+  options.add_argument("--user-data-dir=/tmp/chromium-data")
   options.add_experimental_option("excludeSwitches", ["enable-logging"])
-  driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+  options.binary_location = "/usr/bin/chromium-browser"
+  driver = webdriver.Chrome(service=Service(ChromeDriverManager(driver_version="134.0.6998.117").install()), options=options)
   return driver
 
 def search_prices(type):
@@ -122,5 +131,3 @@ def search_prices(type):
     connection.close()
   
   return data
-
-search_prices('currency')
