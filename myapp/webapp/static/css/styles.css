@@ -2,18 +2,18 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #1D1616;
+    background-color: #202225;
 }
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: #1D1616;
+    background-color: #202225;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 h1 {
-    color: #333;
+    color: #666;
     text-align: center;
     margin-bottom: 30px;
 }
@@ -21,7 +21,7 @@ h1 {
     text-align: center;
     margin: 20px 0;
     padding: 20px;
-    background-color: #1D1616;
+    background-color: #2f3136;
     border-radius: 8px;
 }
 .current-price {
@@ -38,7 +38,7 @@ h1 {
     position: relative;
     height: 400px;
     margin: 20px 0;
-    background-color: #1D1616;
+    background-color: #292b2f;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
