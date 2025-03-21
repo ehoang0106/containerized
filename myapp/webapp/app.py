@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify
 import mysql.connector
 import os
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
 from orbwatch import search_prices
 
 load_dotenv()
@@ -41,6 +40,7 @@ def init_database():
       connection.commit()
       
       return connection
+    
   except mysql.connector.Error as err:
     print(f"Error connecting to MySQL: {err}")
     return None
@@ -70,14 +70,23 @@ def get_data():
       return jsonify({'error': 'No data available'}), 404
     
     #format data for Chart.js
+    labels = []
+    prices = []
+    
+    for row in data:
+      labels.append(row['date'].strftime('%Y-%m-%d %H:%M'))
+      prices.append(float(row['price_value'].replace(',', '')))
+  
     formatted_data = {
-      'labels': [row['date'].strftime('%Y-%m-%d %H:%M') for row in data],
-      'prices': [float(row['price_value'].replace(',', '')) for row in data]
+      'labels': labels,
+      'prices': prices
     }
     
     return jsonify(formatted_data)
+  
   except Exception as e:
     return jsonify({'error': str(e)}), 500
+  
   finally:
     if connection.is_connected():
       connection.close()
