@@ -20,10 +20,10 @@ def get_data():
 
   try:
     cursor = connection.cursor(dictionary=True)
-    #get last 2 days of data
+    #get last 7 days of data
     query = """
     SELECT * FROM orbwatcher 
-    WHERE date >= DATE_SUB(NOW(), INTERVAL 2 DAY)
+    WHERE date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     ORDER BY date ASC
     """
     cursor.execute(query)
