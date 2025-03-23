@@ -2,48 +2,11 @@ from flask import Flask, render_template, jsonify
 import mysql.connector
 import os
 from dotenv import load_dotenv
-from orbwatch import search_prices
+from orbwatch import search_prices, init_database
 
 load_dotenv()
 
 app = Flask(__name__)
-
-def init_database():
-  try:
-    #connect db
-    connection = mysql.connector.connect(
-      host=os.getenv('DB_HOST'),
-      user=os.getenv('DB_USER'),
-      password=os.getenv('DB_PASSWORD')
-    )
-    
-    if connection.is_connected():
-      cursor = connection.cursor()
-      
-      #create db if doesn't exist 
-      cursor.execute("CREATE DATABASE IF NOT EXISTS mydb")
-      cursor.execute("USE mydb")
-      
-      
-      create_table_query = """
-      CREATE TABLE IF NOT EXISTS orbwatcher (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        currency_id VARCHAR(255),
-        currency_name VARCHAR(255),
-        price_value VARCHAR(255),
-        exchange_price_value VARCHAR(255),
-        date DATETIME,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-      """
-      cursor.execute(create_table_query)
-      connection.commit()
-      
-      return connection
-    
-  except mysql.connector.Error as err:
-    print(f"Error connecting to MySQL: {err}")
-    return None
 
 @app.route('/')
 def index():
