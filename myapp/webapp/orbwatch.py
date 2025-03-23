@@ -9,7 +9,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 import mysql.connector
 from datetime import datetime
 import pytz
-from decimal import Decimal, InvalidOperation
 import os
 from dotenv import load_dotenv
 
