@@ -1,6 +1,4 @@
 from flask import Flask, render_template, jsonify
-import mysql.connector
-import os
 from dotenv import load_dotenv
 from orbwatch import search_prices, init_database
 
