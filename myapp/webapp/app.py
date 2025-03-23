@@ -16,6 +16,7 @@ def index():
 def get_data():
   connection = init_database()
   if not connection:
+    print("Database connection failed")
     return jsonify({'error': 'Database connection failed'}), 500
 
   try:
@@ -30,6 +31,7 @@ def get_data():
     data = cursor.fetchall()
     
     if not data:
+      print("No data available")
       return jsonify({'error': 'No data available'}), 404
     
     #format data for Chart.js
@@ -60,6 +62,7 @@ def update_data():
     search_prices('currency')
     return jsonify({'status': 'success'})
   except Exception as e:
+    print(f"Error updating data: {e}")
     return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
