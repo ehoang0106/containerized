@@ -8,7 +8,7 @@ services:
     # ports:
     #   - 5000:5000
     environment:
-      - DB_HOST=192.168.0.94
-      - DB_USER=eh
-      - DB_PASSWORD=Xzkiller1698!
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     network_mode: "host"
