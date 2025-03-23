@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  webapp:
+    build: .
+    container_name: orbwatch
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      - DB_HOST=localhost
+      - DB_USER=khoa
+      - DB_PASSWORD=xzkiller
+      - DB_PORT=3306
+
+volumes:
+  chromium_data:
