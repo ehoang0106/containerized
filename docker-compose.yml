@@ -5,13 +5,10 @@ services:
     build: .
     container_name: orbwatch
     restart: always
-    ports:
-      - 5000:5000
+    # ports:
+    #   - 5000:5000
     environment:
-      - DB_HOST=localhost
-      - DB_USER=khoa
-      - DB_PASSWORD=xzkiller
-      - DB_PORT=3306
-
-volumes:
-  chromium_data:
+      - DB_HOST=192.168.0.94
+      - DB_USER=eh
+      - DB_PASSWORD=Xzkiller1698!
+    network_mode: "host"
