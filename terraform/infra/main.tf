@@ -57,3 +57,87 @@ resource "aws_launch_template" "orbwatch_launch_template" {
     Name = "orbwatch-launch-template"
   }
 }
+
+#auto scaling
+
+resource "aws_auto_scaling_group" "orbwatch_asg" {
+  name = "orbwatch-asg"
+  min_size = 1
+  max_size = 1
+  desired_capacity = 1
+  vpc_zone_identifier = [aws_subnet.orbwatch_subnet1.id, aws_subnet.orbwatch_subnet2.id]
+
+  launch_template {
+    id = aws_launch_template.orbwatch_launch_template.id
+    version = "$Latest"
+  }
+
+  #attach alb
+
+  target_group_arns = [aws_lb_target_group.orbwatch_target_group.arn]
+  haelth_check_type = "ELB"
+  termination_policies = ["OldestInstance"]
+  availaibility_zone_distribution {
+    capacity_distribution_strategy = "balanced-best-effor"
+  }
+}
+
+#alb
+
+resource "aws_lb" "orbwatch_alb" {
+  name = "orbwatch-alb"
+  internal = false
+  load_balancer_type = "application"
+  security_groups = [aws_security_group.orbwatch_sg.id]
+  subnets = [aws_subnet.orbwatch_subnet1.id, aws_subnet.orbwatch_subnet2.id]
+
+  tags = {
+    Name = "orbwatch-alb"
+  }
+}
+#alb listenr
+
+resource "aws_lb_listener" "orbwatch_alb_listener" {
+  load_balancer_arn = aws_lb.orbwatch_alb.arn
+  port = 80
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+  }
+}
+
+#target group
+resource "aws_lb_target_group" "orbwatch_target_group" {
+  name = "orbwatch-target-group"
+  port = 80
+  protocol = "HTTP"
+  target_type = "ip"
+  vpc_id = aws_vpc.orbwatch_vpc.id
+
+  health_check {
+    path = "/"
+  }
+
+  tags = {
+    Name = "orbwatch-target-group"
+  }
+}
+
+#ecs cluster
+
+resource "aws_ecs_cluster" "orb-cluster" {
+  name = "orb-cluster"
+}
+
+resource "aws_ecs_service" "orbwatch_service" {
+  name = "orbwatch-service"
+  cluster = aws_ecs_cluster.orb-cluster.id
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE"
+    weight = 100
+    base = 1
+  }
+}
