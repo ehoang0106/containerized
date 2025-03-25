@@ -131,6 +131,28 @@ resource "aws_ecs_cluster" "orb-cluster" {
   name = "orb-cluster"
 }
 
+resource "aws_ecs_task_definition" "orbwatch_task_definition" {
+  family = "orbwatch-task-definition"
+  network_mode = "awsvpc"
+  execution_role_arn = data.aws_ami_role.ecs_execution_role.arn
+  cpu = "1024"
+  container_definitions = jsonencode([
+    {
+      name = "orbwatch-container"
+      image = "khoahoang/orbwatch:latest"
+      memory = 2048
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort = 80
+          protocol = "tcp"
+        }
+      ]
+    }
+  ])
+}
+
 resource "aws_ecs_service" "orbwatch_service" {
   name = "orbwatch-service"
   cluster = aws_ecs_cluster.orb-cluster.id
@@ -140,4 +162,7 @@ resource "aws_ecs_service" "orbwatch_service" {
     weight = 100
     base = 1
   }
+  platform_version = "LATEST"
+  
+
 }
