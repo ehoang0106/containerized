@@ -7,7 +7,7 @@ terraform {
 
   backend "s3" {
     bucket = "terraform-state-khoa-hoang"
-    key = "terraform-state-aws-network"
+    key = "terraform-state-orbwatch-database"
     region = "us-west-1"
   }
 }
