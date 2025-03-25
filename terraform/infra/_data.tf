@@ -9,3 +9,7 @@ data "local_file" "orbwatch_sg" {
 data "template_file" "user_data" {
   template = data.local_file.orbwatch_sg.content
 }
+
+data "aws_ami_role" "ecs_execution_role" {
+  name = "ecsTaskExecutionRole"
+}
