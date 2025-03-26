@@ -1,30 +1,30 @@
 #database
 
-# resource "aws_db_subnet_group" "db_subnet_group" {
-#   name       = "db_subnet_group"
-#   subnet_ids = [data.aws_subnet.orbwatch_subnet1.id, data.aws_subnet.orbwatch_subnet2.id]
-# }
+resource "aws_db_subnet_group" "db_subnet_group" {
+  name       = "db_subnet_group"
+  subnet_ids = [data.aws_subnet.orbwatch_subnet1.id, data.aws_subnet.orbwatch_subnet2.id]
+}
 
-# resource "aws_db_instance" "orbwatch_db" {
-#   identifier = "orbwatch-db"
-#   provider = aws
-#   allocated_storage = 20
-#   db_name = "orbwatchdb"
-#   engine = "mysql"
-#   engine_version = "8.0.40"
-#   instance_class = "db.t3.micro"
-#   username = var.db_username
-#   password = var.db_password
-#   parameter_group_name = "default.mysql8.0"
-#   publicly_accessible = true
-#   skip_final_snapshot = true
-#   vpc_security_group_ids = [data.aws_security_group.db_sg.id]
-#   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+resource "aws_db_instance" "orbwatch_db" {
+  identifier = "orbwatch-db"
+  provider = aws
+  allocated_storage = 20
+  db_name = "mydb"
+  engine = "mysql"
+  engine_version = "8.0.40"
+  instance_class = "db.t3.micro"
+  username = var.db_username
+  password = var.db_password
+  parameter_group_name = "default.mysql8.0"
+  publicly_accessible = true
+  skip_final_snapshot = true
+  vpc_security_group_ids = [data.aws_security_group.db_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
 
-#   tags = {
-#     Name = "orbwatch-db"
-#   }
-# }
+  tags = {
+    Name = "orbwatch-db"
+  }
+}
 
 # launch template
 resource "aws_launch_template" "orbwatch_launch_template" {
@@ -130,3 +130,110 @@ resource "aws_ecs_cluster" "orbwatch_cluster" {
 }
 #ecs service
 
+#task definition
+resource "aws_ecs_task_definition" "orbwatch_task_definition" {
+  family = "orbwatch-task-definition"
+  requires_compatibilities = ["EC2"]
+  network_mode = "awsvpc"
+  cpu = 1024
+  memory = 512
+  task_role_arn = data.aws_iam_role.ecs_execution_role.arn
+  execution_role_arn = data.aws_iam_role.ecs_execution_role.arn
+  container_definitions = jsonencode([
+    {
+      name = "orbwatch"
+      image = "706572850235.dkr.ecr.us-west-1.amazonaws.com/orbwatch:latest"
+      essential = true
+      cpu = 0
+      portMappings = [
+        {
+          name = "orbwatch-80-tcp"
+          containerPort = 80
+          hostPort = 80
+          protocol = "tcp"
+          appProtocol = "http"
+        }
+      ]
+      environment = [
+        {
+          name = "DB_HOST"
+          value = split(":", aws_db_instance.orbwatch_db.endpoint)[0]
+        },
+        {
+          name = "DB_USERNAME"
+          value = var.db_username
+        },
+        {
+          name = "DB_PASSWORD"
+          value = var.db_password
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/ecs/orbwatch-task-definition"
+          mode = "non-blocking"
+          awslogs-create-group = "true"
+          max-buffer-size = "25m"
+          awslogs-region = "us-west-1"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+      mountPoints = []
+      volumesFrom = []
+      systemControls = []
+    }
+  ])
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture = "X86_64"
+  }
+}
+
+#capacity provider
+resource "aws_ecs_capacity_provider" "orbwatch_capacity_provider" {
+  name = "orbwatch-capacity-provider"
+  auto_scaling_group_provider {
+    auto_scaling_group_arn = aws_autoscaling_group.orbwatch_asg.arn
+    managed_scaling {
+      maximum_scaling_step_size = 1000
+      minimum_scaling_step_size = 1
+      status = "ENABLED"
+      target_capacity = 100
+    }
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "orbwatch_cluster_capacity_providers" {
+  cluster_name = aws_ecs_cluster.orbwatch_cluster.name
+  capacity_providers = [aws_ecs_capacity_provider.orbwatch_capacity_provider.name]
+  default_capacity_provider_strategy {
+    base = 1
+    weight = 100
+    capacity_provider = aws_ecs_capacity_provider.orbwatch_capacity_provider.name
+  }
+}
+
+#ecs service
+resource "aws_ecs_service" "orbwatch_service" {
+  name = "orbwatch-service"
+  cluster = aws_ecs_cluster.orbwatch_cluster.id
+  task_definition = aws_ecs_task_definition.orbwatch_task_definition.arn
+  desired_count = 1
+  
+  network_configuration {
+    subnets = [
+      data.aws_subnet.orbwatch_subnet1.id,
+      data.aws_subnet.orbwatch_subnet2.id
+    ]
+    security_groups = [data.aws_security_group.orbwatch_sg.id]
+
+  }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+    container_name = "orbwatch"
+    container_port = 80
+  }
+  
+  depends_on = [ aws_autoscaling_group.orbwatch_asg ]
+}
