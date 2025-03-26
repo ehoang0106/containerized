@@ -1,37 +1,37 @@
 #database
 
-resource "aws_db_subnet_group" "db_subnet_group" {
-  name       = "db_subnet_group"
-  subnet_ids = [data.aws_subnet.orbwatch_subnet1.id, data.aws_subnet.orbwatch_subnet2.id]
-}
+# resource "aws_db_subnet_group" "db_subnet_group" {
+#   name       = "db_subnet_group"
+#   subnet_ids = [data.aws_subnet.orbwatch_subnet1.id, data.aws_subnet.orbwatch_subnet2.id]
+# }
 
-resource "aws_db_instance" "orbwatch_db" {
-  identifier = "orbwatch-db"
-  provider = aws
-  allocated_storage = 20
-  db_name = "orbwatchdb"
-  engine = "mysql"
-  engine_version = "8.0.40"
-  instance_class = "db.t3.micro"
-  username = var.db_username
-  password = var.db_password
-  parameter_group_name = "default.mysql8.0"
-  publicly_accessible = true
-  skip_final_snapshot = true
-  vpc_security_group_ids = [data.aws_security_group.db_sg.id]
-  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+# resource "aws_db_instance" "orbwatch_db" {
+#   identifier = "orbwatch-db"
+#   provider = aws
+#   allocated_storage = 20
+#   db_name = "orbwatchdb"
+#   engine = "mysql"
+#   engine_version = "8.0.40"
+#   instance_class = "db.t3.micro"
+#   username = var.db_username
+#   password = var.db_password
+#   parameter_group_name = "default.mysql8.0"
+#   publicly_accessible = true
+#   skip_final_snapshot = true
+#   vpc_security_group_ids = [data.aws_security_group.db_sg.id]
+#   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
 
-  tags = {
-    Name = "orbwatch-db"
-  }
-}
+#   tags = {
+#     Name = "orbwatch-db"
+#   }
+# }
 
 # launch template
 resource "aws_launch_template" "orbwatch_launch_template" {
   name = "orbwatch-launch-template"
   image_id = "ami-01eb4eefd88522422"
   instance_type = "t3.micro"
-  key_name = "orb-key"
+  key_name = "orb-kp"
 
   network_interfaces {
     associate_public_ip_address = true
@@ -50,8 +50,8 @@ resource "aws_launch_template" "orbwatch_launch_template" {
     }
   }
 
-  user_data = base64decode(data.template_file.user_data.rendered)
-
+  user_data = base64encode(data.template_file.user_data.rendered)
+  depends_on = [aws_ecs_cluster.orbwatch_cluster]
   tags = {
     Name = "orbwatch-launch-template"
   }
@@ -75,7 +75,6 @@ resource "aws_lb" "orbwatch_alb" {
   name = "orbwatch-alb"
   internal = false
   load_balancer_type = "application"
-  vpc_id = data.aws_vpc.orbwatch_vpc.id
   security_groups = [data.aws_security_group.orbwatch_sg.id]
   subnets = [
     data.aws_subnet.orbwatch_subnet1.id,
