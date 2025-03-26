@@ -106,3 +106,20 @@ resource "aws_lb_listener" "orbwatch_listener" {
 #     target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
 #   }
 # }
+
+#asg
+resource "aws_autoscaling_group" "orbwatch_asg" {
+  name = "orbwatch-asg"
+  min_size = 1
+  max_size = 1
+  desired_capacity = 1
+  vpc_zone_identifier = [
+    data.aws_subnet.orbwatch_subnet1.id,
+    data.aws_subnet.orbwatch_subnet2.id
+  ]
+
+  launch_template {
+    id = aws_launch_template.orbwatch_launch_template.id
+    version = "$Latest"
+  }
+}
