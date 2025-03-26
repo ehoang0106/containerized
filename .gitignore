@@ -12,3 +12,4 @@ terraform.tfvars
 .env.*
 
 __pycache__/
+old_infra/
