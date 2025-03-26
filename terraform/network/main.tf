@@ -70,6 +70,10 @@ resource "aws_security_group" "db_sg" {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "db-sg"
+  }
 }
 
 resource "aws_security_group" "orbwatch_sg" {
@@ -101,5 +105,9 @@ resource "aws_security_group" "orbwatch_sg" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "orbwatch-sg"
   }
 }
