@@ -123,3 +123,9 @@ resource "aws_autoscaling_group" "orbwatch_asg" {
     version = "$Latest"
   }
 }
+
+#ecs cluster
+
+resource "aws_ecs_cluster" "orbwatch_cluster" {
+  name = "orbwatch-cluster"
+}
