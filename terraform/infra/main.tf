@@ -129,3 +129,5 @@ resource "aws_autoscaling_group" "orbwatch_asg" {
 resource "aws_ecs_cluster" "orbwatch_cluster" {
   name = "orbwatch-cluster"
 }
+#ecs service
+
