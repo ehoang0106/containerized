@@ -10,5 +10,5 @@ variable "db_username" {
 
 variable "db_password" {
   type        = string
-  default = "test"
+  default = "Xzkiller1698!"
 }
