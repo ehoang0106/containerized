@@ -2,7 +2,7 @@
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "db_subnet_group"
-  subnet_ids = [aws_subnet.orbwatch_subnet1.id, aws_subnet.orbwatch_subnet2.id]
+  subnet_ids = [data.aws_subnet.orbwatch_subnet1.id, data.aws_subnet.orbwatch_subnet2.id]
 }
 
 resource "aws_db_instance" "orbwatch_db" {
@@ -18,7 +18,7 @@ resource "aws_db_instance" "orbwatch_db" {
   parameter_group_name = "default.mysql8.0"
   publicly_accessible = true
   skip_final_snapshot = true
-  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  vpc_security_group_ids = [data.aws_security_group.db_sg.id]
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
 
   tags = {
@@ -35,7 +35,7 @@ resource "aws_launch_template" "orbwatch_launch_template" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups = [aws_security_group.orbwatch_sg.id]
+    security_groups = [data.aws_security_group.orbwatch_sg.id]
   }
 
   iam_instance_profile {
@@ -56,3 +56,53 @@ resource "aws_launch_template" "orbwatch_launch_template" {
     Name = "orbwatch-launch-template"
   }
 }
+
+#target group
+resource "aws_lb_target_group" "orbwatch_target_group" {
+  name = "orbwatch-target-group"
+  port = 80
+  protocol = "HTTP"
+  vpc_id = data.aws_vpc.orbwatch_vpc.id
+  target_type = "ip"
+
+  health_check {
+    path = "/"
+  }
+}
+#alb
+
+resource "aws_lb" "orbwatch_alb" {
+  name = "orbwatch-alb"
+  internal = false
+  load_balancer_type = "application"
+  vpc_id = data.aws_vpc.orbwatch_vpc.id
+  security_groups = [data.aws_security_group.orbwatch_sg.id]
+  subnets = [
+    data.aws_subnet.orbwatch_subnet1.id,
+    data.aws_subnet.orbwatch_subnet2.id
+  ]
+}
+#listener http
+
+resource "aws_lb_listener" "orbwatch_listener" {
+  load_balancer_arn = aws_lb.orbwatch_alb.arn
+  port = 80
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+  }
+}
+#listener https
+# resource "aws_lb_listener" "orbwatch_listener_https" {
+#   load_balancer_arn = aws_lb.orbwatch_alb.arn
+#   port = 443
+#   protocol = "HTTPS"
+#   certificate_arn = var.certificate_arn
+
+#   default_action {
+#     type = "forward"
+#     target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+#   }
+# }
