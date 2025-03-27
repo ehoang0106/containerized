@@ -216,34 +216,34 @@ resource "aws_ecs_cluster_capacity_providers" "orbwatch_cluster_capacity_provide
 
 #ecs service
 
-# resource "aws_ecs_service" "orbwatch_service" {
-#   name = "orbwatch-service"
-#   cluster = aws_ecs_cluster.orbwatch_cluster.id
-#   task_definition = aws_ecs_task_definition.orbwatch_task_definition.arn
-#   desired_count = 1
+resource "aws_ecs_service" "orbwatch_service" {
+  name = "orbwatch-service"
+  cluster = aws_ecs_cluster.orbwatch_cluster.id
+  task_definition = aws_ecs_task_definition.orbwatch_task_definition.arn
+  desired_count = 1
   
-#   network_configuration {
-#     subnets = [
-#       data.aws_subnet.orbwatch_subnet1.id,
-#       data.aws_subnet.orbwatch_subnet2.id
-#     ]
-#     security_groups = [data.aws_security_group.orbwatch_sg.id]
+  network_configuration {
+    subnets = [
+      data.aws_subnet.orbwatch_subnet1.id,
+      data.aws_subnet.orbwatch_subnet2.id
+    ]
+    security_groups = [data.aws_security_group.orbwatch_sg.id]
 
-#   }
+  }
 
-#   capacity_provider_strategy {
-#     capacity_provider = aws_ecs_capacity_provider.orbwatch_capacity_provider.name
-#     base = 1
-#     weight = 100
-#   }
-#   load_balancer {
-#     target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
-#     container_name = "orbwatch"
-#     container_port = 80
-#   }
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.orbwatch_capacity_provider.name
+    base = 1
+    weight = 100
+  }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+    container_name = "orbwatch"
+    container_port = 80
+  }
   
-#   depends_on = [ aws_autoscaling_group.orbwatch_asg, aws_lb_listener.orbwatch_listener ]
-# }
+  depends_on = [ aws_autoscaling_group.orbwatch_asg, aws_lb_listener.orbwatch_listener ]
+}
 
 resource "aws_cloudwatch_log_group" "orbwatch_log_group" {
   name = "/ecs/orbwatch-task-definition"
