@@ -14,6 +14,6 @@ RUN pip install -r requirements.txt
 
 COPY myapp/webapp .
 
-EXPOSE 5000
+EXPOSE 80
 
 CMD ["python", "app.py"]
