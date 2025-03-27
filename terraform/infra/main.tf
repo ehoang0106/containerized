@@ -244,3 +244,11 @@ resource "aws_ecs_cluster_capacity_providers" "orbwatch_cluster_capacity_provide
   
 #   depends_on = [ aws_autoscaling_group.orbwatch_asg, aws_lb_listener.orbwatch_listener ]
 # }
+
+resource "aws_cloudwatch_log_group" "orbwatch_log_group" {
+  name = "/ecs/orbwatch-task-definition"
+  retention_in_days = 1
+  tags = {
+    Name = "orbwatch-log-group"
+  }
+}
