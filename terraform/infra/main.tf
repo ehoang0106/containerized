@@ -98,17 +98,17 @@ resource "aws_lb_listener" "orbwatch_listener" {
   }
 }
 #listener https
-# resource "aws_lb_listener" "orbwatch_listener_https" {
-#   load_balancer_arn = aws_lb.orbwatch_alb.arn
-#   port = 443
-#   protocol = "HTTPS"
-#   certificate_arn = var.certificate_arn
+resource "aws_lb_listener" "orbwatch_listener_https" {
+  load_balancer_arn = aws_lb.orbwatch_alb.arn
+  port = 443
+  protocol = "HTTPS"
+  certificate_arn = var.cert_arn
 
-#   default_action {
-#     type = "forward"
-#     target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
-#   }
-# }
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.orbwatch_target_group.arn
+  }
+}
 
 #asg
 resource "aws_autoscaling_group" "orbwatch_asg" {
