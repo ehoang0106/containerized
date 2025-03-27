@@ -67,6 +67,10 @@ resource "aws_lb_target_group" "orbwatch_target_group" {
 
   health_check {
     path = "/"
+    timeout = 30
+    interval = 35
+    healthy_threshold = 2
+    unhealthy_threshold = 3
   }
 }
 #alb
