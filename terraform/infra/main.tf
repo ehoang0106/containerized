@@ -63,7 +63,7 @@ resource "aws_lb_target_group" "orbwatch_target_group" {
   port = 80
   protocol = "HTTP"
   vpc_id = data.aws_vpc.orbwatch_vpc.id
-  target_type = "ip"
+  target_type = "instance"
 
   health_check {
     path = "/"
@@ -138,7 +138,7 @@ resource "aws_ecs_cluster" "orbwatch_cluster" {
 resource "aws_ecs_task_definition" "orbwatch_task_definition" {
   family = "orbwatch-task-definition"
   requires_compatibilities = ["EC2"]
-  network_mode = "awsvpc"
+  network_mode = "bridge"
   cpu = 1024
   memory = 2048
   task_role_arn = data.aws_iam_role.ecs_execution_role.arn
@@ -149,13 +149,12 @@ resource "aws_ecs_task_definition" "orbwatch_task_definition" {
       image = "706572850235.dkr.ecr.us-west-1.amazonaws.com/orbwatch:latest"
       essential = true
       cpu = 0
+      memory = 2048
       portMappings = [
         {
-          name = "orbwatch-80-tcp"
           containerPort = 80
           hostPort = 80
           protocol = "tcp"
-          appProtocol = "http"
         }
       ]
       environment = [
@@ -170,6 +169,42 @@ resource "aws_ecs_task_definition" "orbwatch_task_definition" {
         {
           name = "DB_PASSWORD"
           value = var.db_password
+        },
+        {
+          name = "PYTHONPATH"
+          value = "/usr/local/lib/python3.12/site-packages:/app"
+        },
+        {
+          name = "CHROME_BIN"
+          value = "/usr/bin/chromium"
+        },
+        {
+          name = "CHROME_PATH"
+          value = "/usr/bin/chromium"
+        },
+        {
+          name = "CHROMIUM_FLAGS"
+          value = "--no-sandbox --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --remote-debugging-port=9222"
+        }
+      ]
+      linuxParameters = {
+        initProcessEnabled = true,
+        sharedMemorySize = 2048,
+        capabilities = {
+          add = [
+            "SYS_ADMIN",
+            "NET_ADMIN"
+          ]
+        }
+      }
+      dnsSearchDomains = []
+      dnsServers = []
+      dockerSecurityOptions = []
+      ulimits = [
+        {
+          name = "nofile"
+          softLimit = 65536
+          hardLimit = 65536
         }
       ]
       logConfiguration = {
@@ -226,15 +261,6 @@ resource "aws_ecs_service" "orbwatch_service" {
   task_definition = aws_ecs_task_definition.orbwatch_task_definition.arn
   desired_count = 1
   
-  network_configuration {
-    subnets = [
-      data.aws_subnet.orbwatch_subnet1.id,
-      data.aws_subnet.orbwatch_subnet2.id
-    ]
-    security_groups = [data.aws_security_group.orbwatch_sg.id]
-
-  }
-
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.orbwatch_capacity_provider.name
     base = 1
