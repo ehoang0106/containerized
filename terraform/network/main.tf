@@ -111,3 +111,15 @@ resource "aws_security_group" "orbwatch_sg" {
     Name = "orbwatch-sg"
   }
 }
+
+resource "aws_route53_record" "orbwatch_record" {
+  zone_id = var.zone_id
+  name = "orbwatch.khoah.net"
+  type = "A"
+
+  alias {
+    name = data.aws_lb.orbwatch_alb.dns_name
+    zone_id = data.aws_lb.orbwatch_alb.zone_id
+    evaluate_target_health = true
+  }
+}
