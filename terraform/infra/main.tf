@@ -169,44 +169,9 @@ resource "aws_ecs_task_definition" "orbwatch_task_definition" {
         {
           name = "DB_PASSWORD"
           value = var.db_password
-        },
-        {
-          name = "PYTHONPATH"
-          value = "/usr/local/lib/python3.12/site-packages:/app"
-        },
-        {
-          name = "CHROME_BIN"
-          value = "/usr/bin/chromium"
-        },
-        {
-          name = "CHROME_PATH"
-          value = "/usr/bin/chromium"
-        },
-        {
-          name = "CHROMIUM_FLAGS"
-          value = "--no-sandbox --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --remote-debugging-port=9222"
         }
       ]
-      linuxParameters = {
-        initProcessEnabled = true,
-        sharedMemorySize = 2048,
-        capabilities = {
-          add = [
-            "SYS_ADMIN",
-            "NET_ADMIN"
-          ]
-        }
-      }
-      dnsSearchDomains = []
-      dnsServers = []
-      dockerSecurityOptions = []
-      ulimits = [
-        {
-          name = "nofile"
-          softLimit = 65536
-          hardLimit = 65536
-        }
-      ]
+      
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -218,9 +183,6 @@ resource "aws_ecs_task_definition" "orbwatch_task_definition" {
           awslogs-stream-prefix = "ecs"
         }
       }
-      mountPoints = []
-      volumesFrom = []
-      systemControls = []
     }
   ])
   runtime_platform {
