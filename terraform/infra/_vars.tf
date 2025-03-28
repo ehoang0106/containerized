@@ -5,12 +5,12 @@ variable "region" {
 
 variable "db_username" {
   type        = string
-  default = "root"
+  sensitive = true
 }
 
 variable "db_password" {
   type        = string
-  default = "Xzkiller1698!"
+  sensitive = true
 }
 
 variable "cert_arn" {
