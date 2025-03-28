@@ -20,9 +20,9 @@ def init_database():
   try:
     #connect db
     connection = mysql.connector.connect(
-      host=os.getenv('DB_HOST'),
-      user=os.getenv('DB_USER'),
-      password=os.getenv('DB_PASSWORD')
+      host='my-db.c1a84asa4dhn.us-west-1.rds.amazonaws.com',
+      user='admin',
+      password='password'
     )
     
     if connection.is_connected():
