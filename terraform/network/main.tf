@@ -118,7 +118,7 @@ resource "aws_route53_record" "orbwatch_record" {
   type = "A"
 
   alias {
-    name = data.aws_lb.orbwatch_alb.dns_name
+    name = "dualstack.${data.aws_lb.orbwatch_alb.dns_name}"
     zone_id = data.aws_lb.orbwatch_alb.zone_id
     evaluate_target_health = true
   }
