@@ -244,3 +244,15 @@ resource "aws_cloudwatch_log_group" "orbwatch_log_group" {
     Name = "orbwatch-log-group"
   }
 }
+
+resource "aws_route53_record" "orbwatch_record" {
+  zone_id = var.zone_id
+  name = "orbwatch.khoah.net"
+  type = "A"
+
+  alias {
+    name = "dualstack.${aws_lb.orbwatch_alb.dns_name}"
+    zone_id = aws_lb.orbwatch_alb.zone_id
+    evaluate_target_health = true
+  }
+}
