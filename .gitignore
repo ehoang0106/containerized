@@ -13,4 +13,4 @@ terraform.tfvars
 
 __pycache__/
 old_infra/
-.$diagram.drawio.bkp
+*.bkp
