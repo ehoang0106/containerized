@@ -8,7 +8,6 @@ This project demonstrates a containerized Python Flask web application deployed 
 - **Container**: Docker container running on AWS ECS
 - **Database**: AWS RDS (MySQL/MariaDB)
 - **Infrastructure**: Managed through Terraform
-- **CI/CD**: GitHub Actions for automated deployment
 
 ## Prerequisites
 
