@@ -19,36 +19,6 @@ This project demonstrates a containerized Python Flask web application deployed 
 - pip package manager
 
 
-## Local Development Setup
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
-
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-5. Run the application locally:
-```bash
-python myapp/app.py
-```
-
 ## Docker Setup
 
 1. Build the Docker image:
