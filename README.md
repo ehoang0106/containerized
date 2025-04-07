@@ -58,7 +58,7 @@ docker build -t orbwatch .
 
 2. Run the container locally:
 ```bash
-docker run -p 80:80 orbwatch
+docker run -d --net=host orbwatch
 ```
 
 ## Infrastructure Deployment
